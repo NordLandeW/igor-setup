@@ -64,8 +64,14 @@ export class IgorSetup {
     }
     const releases = await fetchReleasesSummaryWithNotes();
     const release = releases.find((r) => r.ide.version == ideVersion);
-    const matchingRuntimeVersion = release?.runtime.version as string;
-    return matchingRuntimeVersion;
+    if (!release) {
+      throw new Error(
+        `Could not find a matching runtime for IDE version "${ideVersion}". ` +
+        `The @bscotch/gamemaker-releases package may not have this version indexed yet. ` +
+        `Please specify the 'runtime-version' input directly.`
+      );
+    }
+    return release.runtime.version;
   }
 
   async ensureIgorBootStrapperBasedOnOs() {
